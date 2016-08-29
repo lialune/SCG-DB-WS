@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="euc-kr"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		                    http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+		version="3.0">
+	<servlet>
+		<servlet-name>JDBCDriverLoader</servlet-name>
+		<servlet-class>mvjsp.jdbc.loader.Loader</servlet-class>
+		<init-param>
+			<param-name>jdbcdriver</param-name>
+			<param-value>com.mysql.jdbc.Driver</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>DBCPInit</servlet-name>
+		<servlet-class>mvjsp.jdbc.loader.DBCPInit</servlet-class>
+		<init-param>
+			<param-name>jdbcdriver</param-name>
+			<param-value>com.mysql.jdbc.Driver</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<context-param>
+		<description>
+			jdbcDriverPath
+		</description>
+		<param-name>jbdcDriverPath</param-name>
+		<param-value>jdbc:mysql://127.0.0.1:3306/SCG?</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			DBUserID
+		</description>
+		<param-name>DBUserID</param-name>
+		<param-value>root</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			jDBUserPassword
+		</description>
+		<param-name>DBUserPassword</param-name>
+		<param-value>lialune26</param-value>
+	</context-param>	
+
+</web-app>
