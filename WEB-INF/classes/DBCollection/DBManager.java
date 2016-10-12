@@ -2,32 +2,34 @@ package DBCollection;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 
 public class DBManager
 {
 	Connection mConn;
-	PreparedStatement mPstmt;
+	Statement mStmt;
 
 	public DBManager()
 	{
 		mConn = null;
-		mPstmt = null;
+		mStmt = null;
 	}
 
 	public boolean Connecting(String _DBPath, String _ID, String _Password, boolean _AutoCommit)
 	{
 		try
 		{
-			String jdbcDriver = _DBPath + "useUnicode=true&characterEncoding=euckr";
+			//Class.forName("com.mysql.jdbc.Driver");
 
+			String jdbcDriver = _DBPath + "useUnicode=true&characterEncoding=euckr";
 			mConn = DriverManager.getConnection(jdbcDriver, _ID, _Password);
-			mConn.setAutoCommit(_AutoCommit);
 
 			if(null != mConn)
 			{
+				mConn.setAutoCommit(_AutoCommit);
+				mStmt = mConn.createStatement();
 				return true;
 			}
 			else
@@ -36,16 +38,15 @@ public class DBManager
 				return false;
 			}
 		}
-		finally
+		catch(SQLException ex)
 		{
-			Release();
 			return false;
 		}
 	}
 
 	public void Release()
 	{
-		if (mPstmt != null) try { mPstmt.close(); } catch(SQLException ex) {}
+		if (mStmt != null) try { mStmt.close(); } catch(SQLException ex) {}
 		if (mConn != null) try { mConn.close(); } catch(SQLException ex) {}
 	}
 
@@ -88,16 +89,16 @@ public class DBManager
 
 	public String CreateSelectQuery(String _TableName, String[] _LabelNames, String _Condition)
 	{
-		String Query = "SELECT (";
+		String Query = "SELECT ";
 		for(int i = 0; _LabelNames.length > i; ++i)
 		{
-			if(0 !=i)
+			Query += ("'" + _LabelNames[i] + "'");
+			if(_LabelNames.length > i + 1)
 			{
 				Query += ", ";
 			}
-			Query += ("'" + _LabelNames[i] + "'");
 		}
-		Query += (") FROM " + _TableName + " WHERE "+ _Condition);
+		Query += (" FROM " + _TableName + " WHERE "+ _Condition);
 
 		return Query;
 	}
@@ -111,9 +112,9 @@ public class DBManager
 	{
 		try
 		{
-			return mPstmt.executeQuery();
+			return mStmt.executeQuery(_Query);
 		}
-		finally
+		catch(SQLException ex)
 		{
 			return null;
 		}
@@ -123,9 +124,9 @@ public class DBManager
 	{
 		try
 		{
-			return mPstmt.executeUpdate();
+			return mStmt.executeUpdate(_Query);
 		}
-		finally
+		catch(SQLException ex)
 		{
 			return -1;
 		}

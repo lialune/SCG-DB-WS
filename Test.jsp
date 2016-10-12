@@ -1,5 +1,10 @@
-<%@ page contentType = "text/html; charset=utf-8" %>
+<%@ page contentType = "text/html; charset=euc-kr"
+	import = "org.json.simple.*" %>
 <%
-	out.print("TesTes");
-	out.print("TesT");
+	JSONObject json = new JSONObject();
+	json.put("id", "test");
+	json.put("pass", "1234");
+	json.put("name", "±èÇö¿ì");
+
+	out.println(json.toJSONString());
 %>

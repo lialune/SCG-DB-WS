@@ -1,6 +1,6 @@
 <%@ page contentType = "text/html; charset=utf-8" %>
 <%@ page import = "java.sql.SQLException" %>
-<%@ page import = "java.sql.ResultSet %>
+<%@ page import = "java.sql.ResultSet" %>
 <%@ page import = "DBCollection.DBManager" %>
 
 <%!
@@ -15,32 +15,33 @@
 	String guid;
 	boolean State = true;
 
-	Class.forName("com.mysql.jdbc.Driver");
 	DBManager DBMgr = new DBManager();
 	ResultSet rs = null;
+	String TableName = "SCG.user";
 
 	try {
 	
-		DBMgr.Connecting(application.getInitParameter("jdbcDriverPath"), application.getInitParameter("DBUserID"), application.getInitParameter("DBUserPasswod"), false);
+		DBMgr.Connecting(application.getInitParameter("jdbcDriverPath"), application.getInitParameter("DBUserID"), application.getInitParameter("DBUserPassword"), false);
 
 		String[] Labels = {"guid"};
-		String Condition = "id=" + ID + " AND idtype=" + IDType;
-		rs = DBMgr.ExecuteQuery(DBMgr.CreateSelectQuery("user", Label, Condition);
-	
-		if(re.next())
+		String Condition = "id='" + ID + "' AND idtype='" + IDType +"'";
+		String Query = DBMgr.CreateSelectQuery(TableName, Labels, Condition);
+
+		rs = DBMgr.ExcuteQuery(Query);
+
+		if(rs.next())
 		{
 			State = false;
 		}
 		else
 		{
-			rs = DBMgr.ExecuteQuery(DBMgr.CreateUUIDQuery());
+			rs = DBMgr.ExcuteQuery(DBMgr.CreateUUIDQuery());
 		}
-
 	}
-	finally {
+	catch(SQLException ex)
+	{
 		State = false;
-		if (pstmt != null) try { pstmt.close(); } catch(SQLException ex) {}
-		if (conn != null) try { conn.close(); } catch(SQLException ex) {}
+		DBMgr.Release();
 	}
 %>
 
@@ -53,13 +54,13 @@
 				{
 					if(rs.next())
 					{
-						guid = ReCombination(rs.getString("UUID()"));
-						String Values = "'{0}', '{1}', '{2}');
+						guid = DBMgr.ReCombination(rs.getString("UUID()"));
+						String Values = "'{0}', '{1}', '{2}')";
 						Values.replace("{0}", guid);
 						Values.replace("{1}", ID);
 						Values.replace("{2}", IDType);
 
-						int RowCount = DBMgr.ExecuteUpdate(DBMgr.CreateInserQuery(user, "'guid', 'id', 'idtype'", Values));
+						int RowCount = DBMgr.ExcuteUpdate(DBMgr.CreateInsertQuery(TableName, "'guid', 'id', 'idtype'", Values));
 
 						out.print("Result:Success");
 						out.print("guid:"+ guid );
@@ -74,11 +75,14 @@
 					out.print("Result:Fail");
 				}
 			}
-			finally
+			catch(SQLException ex)
 			{
 				out.print("Result:Fail");
 			}
-			DBMgr.Release();
+			finally
+			{
+				DBMgr.Release();
+			}
 		%>
 	</body>
 </html>

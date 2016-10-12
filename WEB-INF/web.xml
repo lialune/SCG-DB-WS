@@ -29,7 +29,7 @@
 		<description>
 			jdbcDriverPath
 		</description>
-		<param-name>jbdcDriverPath</param-name>
+		<param-name>jdbcDriverPath</param-name>
 		<param-value>jdbc:mysql://127.0.0.1:3306/SCG?</param-value>
 	</context-param>
 
